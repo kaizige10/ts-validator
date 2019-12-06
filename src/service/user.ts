@@ -2,7 +2,7 @@ type User = {
     username: string,
     age: number
 }
-const users = [{
+let users = [{
     username: 'kaizige',
     age: 25
 }, {
@@ -13,8 +13,18 @@ const users = [{
 export function add(user: User) {
     users.push(user)
 }
+
+export function deleteUser(username: string) {
+    users = users.filter(u => u.username !== username)
+}
+
 export function getUsers(): User[] {
     return users
+}
+
+export async function updateUser(user: User) {
+    const index = users.findIndex(u => u.username === user.username)
+    users.splice(index, 1, user)
 }
 
 export function getUserByName(name: string): Promise<User> {

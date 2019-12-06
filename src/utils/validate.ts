@@ -29,7 +29,7 @@ type paramType = 'url' | 'body' | 'all';
  * 使用方法：(可参考routes/user.ts)
  * class User {
  *     @post('/users')
- *     @validate({name: 'required', age: 'numeric|min:0'}, {required: 'you must input :attribute!!!'})
+ *     @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
  *     public async addUser(ctx) {
  *         users.push(ctx.request.body)
  *         ctx.body = {code: 'success'}
@@ -40,6 +40,7 @@ type paramType = 'url' | 'body' | 'all';
  * 1.validate装饰器必须用于方法装饰器(get、post等)之后，否则无法生效
  * 
  * @param rules object 校验规则 使用Laravel校验规则,参考：https://laravel.com/docs/6.x/validation#available-validation-rules
+ * @param type paramType 需要校验的参数类型
  * @param customMessage object 自定义提示信息 可选
  */
 export function validate(rules: object, type: paramType, customMessage: object = {}) {
@@ -52,7 +53,7 @@ export function validate(rules: object, type: paramType, customMessage: object =
             } else if (type === 'url') {
                 validation = new Validator(ctx.query, rules, customMessage)
             } else {
-                validation = new Validator({ ...ctx.query, ...ctx.request }, rules, customMessage)
+                validation = new Validator({ ...ctx.query, ...ctx.request.body }, rules, customMessage)
             }
             return new Promise((resolve, reject) => {
                 validation.checkAsync(() => {// 成功的回调

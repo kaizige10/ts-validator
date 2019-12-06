@@ -1,6 +1,6 @@
 import { validate, registerValidator } from '../utils/validate'
-import { get, post } from '../utils/route-decorator'
-import { getUserByName, isUserExist, getUsers, add } from "../service/user";
+import { get, post, del } from '../utils/route-decorator'
+import { getUserByName, isUserExist, getUsers, add, deleteUser, updateUser } from "../service/user";
 
 @registerValidator([{
     ruleName: 'userNotExist',
@@ -9,6 +9,13 @@ import { getUserByName, isUserExist, getUsers, add } from "../service/user";
         result ? passes(false) : passes(true)
     },
     message: ':attribute is already exist!'
+}, {
+    ruleName: 'userExist',
+    validator: async function customValidator(username, attribute, req, passes) {
+        let result = await isUserExist(username)
+        result ? passes(true) : passes(false)
+    },
+    message: ':attribute do not exist!'
 }])
 class User {
     @get('/users')
@@ -30,6 +37,20 @@ class User {
     @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
     public async addUser(ctx) {
         add(ctx.request.body)
+        ctx.body = { code: 'success' }
+    }
+
+    @post('/updateuser')
+    @validate({ username: 'required|userExist', age: 'numeric|checkAge' }, 'all')
+    public async updateUser(ctx) {
+        updateUser({ ...ctx.request.body, ...ctx.query })
+        ctx.body = { code: 'success' }
+    }
+
+    @del('/user')
+    @validate({ username: 'required|userExist' }, 'url')
+    public async delUser(ctx) {
+        deleteUser(ctx.query.username)
         ctx.body = { code: 'success' }
     }
 }
