@@ -1,0 +1,33 @@
+{
+  "name": "ts-validator",
+  "version": "1.0.0",
+  "description": "a validator based on typescript and decorator",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev ./src/index.ts -P tsconfig.json --no-cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaizige10/ts-validator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaizige10/ts-validator/issues"
+  },
+  "homepage": "https://github.com/kaizige10/ts-validator#readme",
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "glob": "^7.1.6",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-router": "^7.4.0",
+    "validatorjs": "^3.18.1"
+  }
+}
