@@ -8,7 +8,7 @@ get和post不同的方式如何实现比较合理
 自己选择一个合理的第三方校验库，不一定async-validator
 
 ## 分析
-### 1.第三方校验库选择[validatorjs](https://github.com/skaterdav85/validatorjs)，这个库人气较高，使用Laravel语法，学习起来比较简单，而且支持多语言错误提示和自定义异步校验器
+### 1.第三方校验库选择[validatorjs](https://github.com/skaterdav85/validatorjs)，这个库人气较高，使用Laravel语法，学习起来比较简单，而且支持嵌套校验规则、多语言错误提示和自定义异步校验器
 ### 2.考虑异步校验，增加自定义校验器
 ### 3.get请求需要校验queryString，post请求校验body，也可以全部都校验
 
