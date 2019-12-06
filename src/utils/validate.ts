@@ -16,6 +16,13 @@ type AsyncValidator = {
 }
 
 /**
+ * 需要校验的参数类型
+ * url：参数包含在url中
+ * body：参数在请求的body中
+ */
+type paramType = 'url' | 'body' | 'all';
+
+/**
  * validate装饰器，用于接口校验
  * 校验规则参考Laravel校验框架，简单方便
  * 
@@ -35,12 +42,18 @@ type AsyncValidator = {
  * @param rules object 校验规则 使用Laravel校验规则,参考：https://laravel.com/docs/6.x/validation#available-validation-rules
  * @param customMessage object 自定义提示信息 可选
  */
-export function validate(rules: object, customMessage: object = {}) {
+export function validate(rules: object, type: paramType, customMessage: object = {}) {
     return (target: object, property: string, descriptor: PropertyDescriptor) => {
         let func = descriptor.value;// 保存老的函数
         descriptor.value = async function validator(...args) {// 使用校验函数替代
-            let ctx = args[0]
-            let validation = new Validator(ctx.request.body, rules, customMessage)// 直接对ctx.request.body进行校验
+            let ctx = args[0], validation;
+            if (type === 'body') {
+                validation = new Validator(ctx.request.body, rules, customMessage)
+            } else if (type === 'url') {
+                validation = new Validator(ctx.query, rules, customMessage)
+            } else {
+                validation = new Validator({ ...ctx.query, ...ctx.request }, rules, customMessage)
+            }
             return new Promise((resolve, reject) => {
                 validation.checkAsync(() => {// 成功的回调
                     resolve(func.apply(null, args))

@@ -18,6 +18,7 @@ class User {
     }
 
     @get('/user')
+    @validate({ username: 'required' }, 'url')
     public async getUser(ctx) {
         const user = await getUserByName(ctx.query.username)
         ctx.body = { code: 'success', user }
@@ -26,7 +27,7 @@ class User {
     @post('/user')
     // @validate({username: 'required', age: 'numeric|min:0'})
     // @validate({ username: 'required', age: 'numeric|min:0' }, { required: 'you must input :attribute!!!' })
-    @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' })
+    @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
     public async addUser(ctx) {
         add(ctx.request.body)
         ctx.body = { code: 'success' }
