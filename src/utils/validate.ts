@@ -40,10 +40,10 @@ type paramType = 'url' | 'body' | 'all';
  * 1.validate装饰器必须用于方法装饰器(get、post等)之后，否则无法生效
  * 
  * @param rules object 校验规则 使用Laravel校验规则,参考：https://laravel.com/docs/6.x/validation#available-validation-rules
- * @param type paramType 需要校验的参数类型
+ * @param type paramType 需要校验的参数类型 可选
  * @param customMessage object 自定义提示信息 可选
  */
-export function validate(rules: object, type: paramType, customMessage: object = {}) {
+export function validate(rules: object, type: paramType = 'url', customMessage: object = {}) {
     return (target: object, property: string, descriptor: PropertyDescriptor) => {
         let func = descriptor.value;// 保存老的函数
         descriptor.value = async function validator(...args) {// 使用校验函数替代
@@ -52,7 +52,7 @@ export function validate(rules: object, type: paramType, customMessage: object =
                 validation = new Validator(ctx.request.body, rules, customMessage)
             } else if (type === 'url') {
                 validation = new Validator(ctx.query, rules, customMessage)
-            } else {
+            } else if (type === 'all') {
                 validation = new Validator({ ...ctx.query, ...ctx.request.body }, rules, customMessage)
             }
             return new Promise((resolve, reject) => {
@@ -81,9 +81,7 @@ export function validate(rules: object, type: paramType, customMessage: object =
  * @param asyncValidators 异步校验器数组
  */
 export function registerValidator(asyncValidators: AsyncValidator[]) {
-    return (target) => {
-        initValidator(asyncValidators);
-    }
+    return (target) => initValidator(asyncValidators)
 }
 
 /**

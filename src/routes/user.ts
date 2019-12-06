@@ -48,7 +48,7 @@ class User {
     }
 
     @del('/user')
-    @validate({ username: 'required|userExist' }, 'url')
+    @validate({ username: 'required|userExist' })
     public async delUser(ctx) {
         deleteUser(ctx.query.username)
         ctx.body = { code: 'success' }

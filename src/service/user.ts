@@ -11,6 +11,7 @@ let users = [{
 }]
 
 export function add(user: User) {
+    user.age = Number(user.age)
     users.push(user)
 }
 
@@ -23,6 +24,7 @@ export function getUsers(): User[] {
 }
 
 export async function updateUser(user: User) {
+    user.age = Number(user.age)
     const index = users.findIndex(u => u.username === user.username)
     users.splice(index, 1, user)
 }
