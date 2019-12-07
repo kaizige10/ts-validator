@@ -4,14 +4,14 @@ import { getUserByName, isUserExist, getUsers, add, deleteUser, updateUser } fro
 
 @registerValidator([{
     ruleName: 'userNotExist',
-    validator: async function customValidator(username, attribute, req, passes) {
+    validator: async function customValidator(username, passes) {
         let result = await isUserExist(username)
         result ? passes(false) : passes(true)
     },
     message: ':attribute is already exist!'
 }, {
     ruleName: 'userExist',
-    validator: async function customValidator(username, attribute, req, passes) {
+    validator: async function customValidator(username, passes) {
         let result = await isUserExist(username)
         result ? passes(true) : passes(false)
     },
@@ -34,7 +34,8 @@ class User {
     @post('/user')
     // @validate({username: 'required', age: 'numeric|min:0'})
     // @validate({ username: 'required', age: 'numeric|min:0' }, { required: 'you must input :attribute!!!' })
-    @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
+    // @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
+    @validate({ username: ['required', 'userNotExist', 'regex:/^[\\w]*$/'], age: 'numeric|checkAge' }, 'body')
     public async addUser(ctx) {
         add(ctx.request.body)
         ctx.body = { code: 'success' }

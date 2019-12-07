@@ -22,7 +22,7 @@ app.use(bodify({
 // 初始化自定义校验方法
 initValidator([{
     ruleName: 'checkAge',
-    validator: async function customValidator(age, attribute, req, passes) {
+    validator: async function customValidator(age, passes) {
         if (age > 0 && age < 100) {
             passes(true)
         } else {

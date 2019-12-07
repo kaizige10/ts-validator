@@ -7,11 +7,10 @@ type AsyncValidator = {
     ruleName: string, // 校验规则名
     /**
      * 自定义校验函数
-     * @param name string 校验对象值
-     * 第2,3个参数无用
+     * @param value string 校验对象值
      * @param passes Function 校验成功时调用passed()，失败时调用passed(false)
      */
-    validator: (value: any, ruleValue, attribute, passes: Function) => {},
+    validator: (value: any, passes: Function) => {},
     message: string// 自定义提示信息
 }
 
@@ -40,7 +39,7 @@ type paramType = 'url' | 'body' | 'all';
  * 1.validate装饰器必须用于方法装饰器(get、post等)之后，否则无法生效
  * 
  * @param rules object 校验规则 使用Laravel校验规则,参考：https://laravel.com/docs/6.x/validation#available-validation-rules
- * @param type paramType 需要校验的参数类型 可选
+ * @param type paramType 需要校验的参数类型 可选 默认为url校验
  * @param customMessage object 自定义提示信息 可选
  */
 export function validate(rules: object, type: paramType = 'url', customMessage: object = {}) {
@@ -56,7 +55,7 @@ export function validate(rules: object, type: paramType = 'url', customMessage: 
                 validation = new Validator({ ...ctx.query, ...ctx.request.body }, rules, customMessage)
             }
             return new Promise((resolve, reject) => {
-                validation.checkAsync(() => {// 成功的回调
+                validation && validation.checkAsync(() => {// 成功的回调
                     resolve(func.apply(null, args))
                 }, () => {// 失败回调
                     reject(validation.errors.all())
@@ -90,5 +89,8 @@ export function registerValidator(asyncValidators: AsyncValidator[]) {
  * @param asyncValidators 异步校验器数组
  */
 export function initValidator(asyncValidators: AsyncValidator[]) {
-    asyncValidators.forEach(v => Validator.registerAsync(v.ruleName, v.validator, v.message))
+    asyncValidators.forEach(v => Validator.registerAsync(v.ruleName,
+        // validatorjs的自定义校验器需要传4个参数，实际上只有value和passes有用，再这里做一次函数转换
+        (value: any, ruleValue, attribute, passes: Function) => v.validator(value, passes),
+        v.message))
 }
