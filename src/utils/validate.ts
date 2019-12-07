@@ -55,11 +55,11 @@ export function validate(rules: object, type: paramType = 'url', customMessage: 
                 validation = new Validator({ ...ctx.query, ...ctx.request.body }, rules, customMessage)
             }
             return new Promise((resolve, reject) => {
-                validation && validation.checkAsync(() => {// 成功的回调
+                validation ? validation.checkAsync(() => {// 成功的回调
                     resolve(func.apply(null, args))
                 }, () => {// 失败回调
                     reject(validation.errors.all())
-                })
+                }) : resolve(func.apply(null, args))
             })
         }
     }
