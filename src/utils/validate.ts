@@ -15,20 +15,13 @@ type AsyncValidator = {
 }
 
 /**
- * 需要校验的参数类型
- * url：参数包含在url中
- * body：参数在请求的body中
- */
-type paramType = 'url' | 'body' | 'all';
-
-/**
  * validate装饰器，用于接口校验
  * 校验规则参考Laravel校验框架，简单方便
  * 
  * 使用方法：(可参考routes/user.ts)
  * class User {
  *     @post('/users')
- *     @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' }, 'body')
+ *     @validate({ username: 'required|userNotExist', age: 'numeric|checkAge' })
  *     public async addUser(ctx) {
  *         users.push(ctx.request.body)
  *         ctx.body = {code: 'success'}
