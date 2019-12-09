@@ -37,22 +37,23 @@ type paramType = 'url' | 'body' | 'all';
  * 
  * 注意：
  * 1.validate装饰器必须用于方法装饰器(get、post等)之后，否则无法生效
+ * 2.默认get、delete校验query，put和post校验body
  * 
  * @param rules object 校验规则 使用Laravel校验规则,参考：https://laravel.com/docs/6.x/validation#available-validation-rules
- * @param type paramType 需要校验的参数类型 可选 默认为url校验
  * @param customMessage object 自定义提示信息 可选
  */
-export function validate(rules: object, type: paramType = 'url', customMessage: object = {}) {
+export function validate(rules: object, customMessage: object = {}) {
     return (target: object, property: string, descriptor: PropertyDescriptor) => {
         let func = descriptor.value;// 保存老的函数
+
         descriptor.value = async function validator(...args) {// 使用校验函数替代
             let ctx = args[0], validation;
-            if (type === 'body') {
-                validation = new Validator(ctx.request.body, rules, customMessage)
-            } else if (type === 'url') {
+            if (ctx.method === 'GET' || ctx.method === 'DELETE') {
+                // console.log('ctx.query', ctx.query);
                 validation = new Validator(ctx.query, rules, customMessage)
-            } else if (type === 'all') {
-                validation = new Validator({ ...ctx.query, ...ctx.request.body }, rules, customMessage)
+            } else {
+                // console.log('ctx.request.body', ctx.request.body);
+                validation = new Validator(ctx.request.body, rules, customMessage)
             }
             return new Promise((resolve, reject) => {
                 validation ? validation.checkAsync(() => {// 成功的回调

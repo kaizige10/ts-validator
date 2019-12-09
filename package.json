@@ -4,7 +4,8 @@
   "description": "a validator based on typescript and decorator",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev ./src/index.ts -P tsconfig.json --no-cache"
+    "start": "ts-node-dev ./src/index.ts -P tsconfig.json --no-cache",
+    "test": "ts-node-dev ./test.ts -P tsconfig.json --no-cache"
   },
   "repository": {
     "type": "git",
