@@ -10,7 +10,17 @@ get和post不同的方式如何实现比较合理
 ## 分析
 1. 第三方校验库选择[validatorjs](https://github.com/skaterdav85/validatorjs)，这个库人气较高，使用Laravel语法，学习起来比较简单，而且支持嵌套校验规则、多语言错误提示和自定义异步校验器
 2. 考虑异步校验，增加自定义校验器
-3. get、delete请求需要校验query，post、put请求需要校验body。默认从ctx.method获取，无需传参
+3. 接口设计上，get、delete请求我设计为通过query传参，因此只需要校验query；post、put请求设计为仅通过body传参因此只需要校验body。默认从ctx.method获取，无需将校验的类型传递给装饰器。
+
+## 项目启动
+```
+npm install
+```
+
+## 项目运行
+```
+npm start
+```
 
 ## 校验器使用方法
 ### 1.基本用法
